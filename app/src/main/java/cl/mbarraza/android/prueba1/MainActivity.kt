@@ -1,6 +1,7 @@
 package cl.mbarraza.android.prueba1
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,16 +9,19 @@ import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import cl.mbarraza.android.clases.ItemMenu
-import cl.mbarraza.android.clases.ItemMesa
-import cl.mbarraza.android.clases.CuentaMesa
+import cl.mbarraza.android.prueba1.Clases.CuentaMesa
+import cl.mbarraza.android.prueba1.Clases.ItemMenu
+import cl.mbarraza.android.prueba1.Clases.ItemMesa
 import java.text.NumberFormat
-import java.util.*
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var pastelDeChocloCantidad: EditText
     private lateinit var cazuelaCantidad: EditText
+    private lateinit var pastelSubtotalTextView: TextView
+    private lateinit var cazuelaSubtotalTextView: TextView
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var propinaSwitch: Switch
     private lateinit var subtotalTextView: TextView
     private lateinit var propinaTextView: TextView
@@ -26,9 +30,7 @@ class MainActivity : AppCompatActivity() {
     private val pastelDeChoclo = ItemMenu("Pastel de Choclo", 12000)
     private val cazuela = ItemMenu("Cazuela", 10000)
 
-    // Se crea la cuenta para la mesa 1 (mesa: 1)
     private val cuentaMesa = CuentaMesa(1)
-
     private val formatoPesos: NumberFormat = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,24 +39,25 @@ class MainActivity : AppCompatActivity() {
 
         pastelDeChocloCantidad = findViewById(R.id.etPastelCantidad)
         cazuelaCantidad = findViewById(R.id.etCazuelaCantidad)
+        pastelSubtotalTextView = findViewById(R.id.tvPastelSubtotal)
+        cazuelaSubtotalTextView = findViewById(R.id.tvCazuelaSubtotal)
         propinaSwitch = findViewById(R.id.switchPropina)
         subtotalTextView = findViewById(R.id.tvSubtotal)
         propinaTextView = findViewById(R.id.tvPropina)
         totalTextView = findViewById(R.id.tvTotal)
 
-        // Agregamos los platillos a la cuenta inicial
         cuentaMesa.agregarItem(pastelDeChoclo, 0)
         cuentaMesa.agregarItem(cazuela, 0)
 
-        pastelDeChocloCantidad.addTextChangedListener(cantidadWatcher(pastelDeChoclo))
-        cazuelaCantidad.addTextChangedListener(cantidadWatcher(cazuela))
+        pastelDeChocloCantidad.addTextChangedListener(cantidadWatcher(pastelDeChoclo, pastelSubtotalTextView))
+        cazuelaCantidad.addTextChangedListener(cantidadWatcher(cazuela, cazuelaSubtotalTextView))
         propinaSwitch.setOnCheckedChangeListener { _, isChecked ->
             cuentaMesa.aceptarPropina = isChecked
             actualizarTotales()
         }
     }
 
-    private fun cantidadWatcher(itemMenu: ItemMenu): TextWatcher {
+    private fun cantidadWatcher(itemMenu: ItemMenu, subtotalTextView: TextView): TextWatcher {
         return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -62,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 val cantidad = s?.toString()?.toIntOrNull() ?: 0
                 val itemMesa = cuentaMesa.items.find { it.itemMenu == itemMenu }
                 itemMesa?.cantidad = cantidad
+                subtotalTextView.text = " ${formatoPesos.format(itemMesa?.calcularSubtotal() ?: 0)}"
                 actualizarTotales()
             }
 
