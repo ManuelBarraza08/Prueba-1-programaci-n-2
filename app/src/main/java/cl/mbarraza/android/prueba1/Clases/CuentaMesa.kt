@@ -43,4 +43,3 @@ class CuentaMesa(
         return calcularTotalSinPropina() + calcularPropina()
     }
 }
-}
