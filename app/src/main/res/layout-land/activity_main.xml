@@ -55,7 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:hint="Cantidad"
-            android:inputType="number" />
+            android:inputType="number"
+            android:minHeight="48dp" />
 
         <TextView
             android:id="@+id/tvPastelSubtotal"
@@ -101,7 +102,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:hint="Cantidad"
-            android:inputType="number" />
+            android:inputType="number"
+            android:minHeight="48dp" />
 
         <TextView
             android:id="@+id/tvCazuelaSubtotal"
@@ -140,7 +142,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:minWidth="48dp"
+            android:minHeight="48dp" />
     </LinearLayout>
 
     <LinearLayout
